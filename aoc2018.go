@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -10,6 +11,8 @@ import (
 	"github.com/nlowe/aoc2018/day1"
 	"github.com/nlowe/aoc2018/day2"
 )
+
+var start time.Time
 
 var rootCmd = &cobra.Command{
 	Use:   "aoc2018",
@@ -23,6 +26,10 @@ var rootCmd = &cobra.Command{
 			fmt.Println("Input File Required")
 			os.Exit(1)
 		}
+		start = time.Now()
+	},
+	PersistentPostRun: func(_ *cobra.Command, _ []string) {
+		fmt.Printf("Took %s", time.Since(start))
 	},
 }
 

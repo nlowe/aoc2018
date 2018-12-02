@@ -20,7 +20,9 @@ To run a solution, use the problem name followed by the path to an input file.
 For example, to run problem 2a:
 
 ```bash
-go run ./aoc2018.go 2a ./day2/input.txt
+$ go run ./aoc2018.go 2a ./day2/input.txt
+Answer: 9633
+Took 999.4µs
 ```
 
 ## License
