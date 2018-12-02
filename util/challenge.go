@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 type ChallengeInput struct {
@@ -18,13 +20,9 @@ func TestInput(input string) *ChallengeInput {
 }
 
 func ReadInput() *ChallengeInput {
-	if len(os.Args) < 2 {
-		panic("No input")
-	}
-
 	var err error
 	var f *os.File
-	if f, err = os.Open(os.Args[1]); err != nil {
+	if f, err = os.Open(viper.GetString("input")); err != nil {
 		panic(err)
 	} else {
 		return newInputFromReader(f, f)
@@ -32,11 +30,10 @@ func ReadInput() *ChallengeInput {
 }
 
 func newInputFromReader(r io.Reader, c io.Closer) *ChallengeInput {
-	result := &ChallengeInput{}
-
-	result.scanner = bufio.NewScanner(r)
-
-	result.lines = make(chan string)
+	result := &ChallengeInput{
+		scanner: bufio.NewScanner(r),
+		lines:   make(chan string),
+	}
 
 	go func() {
 		defer func() {

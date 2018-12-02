@@ -1,14 +1,20 @@
-package main
+package day2
 
 import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/nlowe/aoc2018/util"
 )
 
-func main() {
-	fmt.Printf("Answer: %d\n", a(util.ReadInput()))
+var A = &cobra.Command{
+	Use:   "2a",
+	Short: "Day 2, Problem A",
+	Run: func(_ *cobra.Command, _ []string) {
+		fmt.Printf("Answer: %d\n", a(util.ReadInput()))
+	},
 }
 
 func a(input *util.ChallengeInput) int {

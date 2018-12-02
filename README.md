@@ -13,6 +13,16 @@ go mod download
 go test ./...
 ```
 
+## Running the Solutions
+
+To run a solution, use the problem name followed by the path to an input file.
+
+For example, to run problem 2a:
+
+```bash
+go run ./aoc2018.go 2a ./day2/input.txt
+```
+
 ## License
 
 Copyright © `2018` `Nathan Lowe`
