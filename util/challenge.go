@@ -38,8 +38,8 @@ func newInputFromReader(r io.Reader, c io.Closer) *ChallengeInput {
 
 	result.lines = make(chan string)
 
-	go func(){
-		defer func(){
+	go func() {
+		defer func() {
 			if c != nil {
 				c.Close()
 			}

@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/nlowe/aoc2018/util"
 	"strconv"
 	"strings"
+
+	"github.com/nlowe/aoc2018/util"
 )
 
 func main() {
-	fmt.Printf(	"Answer: %d", a(util.ReadInput()))
+	fmt.Printf("Answer: %d", a(util.ReadInput()))
 }
 
 func a(input *util.ChallengeInput) int {

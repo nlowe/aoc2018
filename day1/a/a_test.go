@@ -1,9 +1,10 @@
 package main
 
 import (
+	"testing"
+
 	"github.com/nlowe/aoc2018/util"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestA_ExampleA(t *testing.T) {

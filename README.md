@@ -1,6 +1,6 @@
 # Advent of Code 2018
 
-[![Build Status](https://travis-ci.org/nlowe/aoc2018.svg?branch=master)](https://travis-ci.org/nlowe/aoc2018) [![Coverage Status](https://coveralls.io/repos/github/nlowe/aoc2018/badge.svg?branch=master)](https://coveralls.io/github/nlowe/aoc2018?branch=master)
+[![Build Status](https://travis-ci.org/nlowe/aoc2018.svg?branch=master)](https://travis-ci.org/nlowe/aoc2018) [![Coverage Status](https://coveralls.io/repos/github/nlowe/aoc2018/badge.svg?branch=master)](https://coveralls.io/github/nlowe/aoc2018?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/nlowe/aoc2018)](https://goreportcard.com/report/github.com/nlowe/aoc2018)
 
 Solutions for the 2018 Advent of Code
 

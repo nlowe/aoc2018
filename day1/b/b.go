@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/nlowe/aoc2018/util"
 	"strconv"
 	"strings"
+
+	"github.com/nlowe/aoc2018/util"
 )
 
 func main() {
