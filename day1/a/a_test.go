@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestExampleA(t *testing.T) {
+func TestA_ExampleA(t *testing.T) {
 	input := util.TestInput(`+1
 +1
 +1
@@ -15,7 +15,7 @@ func TestExampleA(t *testing.T) {
 	assert.Equal(t, 3, a(input))
 }
 
-func TestExampleB(t *testing.T) {
+func TestA_ExampleB(t *testing.T) {
 	input := util.TestInput(`+1
 +1
 -2
@@ -24,7 +24,7 @@ func TestExampleB(t *testing.T) {
 	assert.Equal(t, 0, a(input))
 }
 
-func TestExampleC(t *testing.T) {
+func TestA_ExampleC(t *testing.T) {
 	input := util.TestInput(`-1
 -2
 -3
