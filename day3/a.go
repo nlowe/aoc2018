@@ -34,6 +34,7 @@ func intMin(a, b int) int {
 }
 
 type claim struct {
+	id     int
 	top    int
 	left   int
 	width  int
@@ -49,6 +50,12 @@ func parseClaim(line string) *claim {
 	wh := strings.Split(parts[3], "x")
 
 	result := &claim{}
+
+	if id, err := strconv.Atoi(strings.TrimLeft(parts[0], "#")); err != nil {
+		panic(err)
+	} else {
+		result.id = id
+	}
 
 	if l, err := strconv.Atoi(tl[0]); err != nil {
 		panic(err)
