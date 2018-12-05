@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/nlowe/aoc2018/day4"
+
 	"github.com/nlowe/aoc2018/day3"
 
 	"github.com/spf13/cobra"
@@ -40,6 +42,7 @@ func main() {
 		day1.A, day1.B,
 		day2.A, day2.B,
 		day3.A, day3.B,
+		day4.A,
 	)
 
 	flags := rootCmd.PersistentFlags()
