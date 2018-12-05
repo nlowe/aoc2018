@@ -22,9 +22,7 @@ func intAbs(a int32) int32 {
 	return (a + (a >> 31)) ^ (a >> 31)
 }
 
-func a(input *util.ChallengeInput) int {
-	polymer := <-input.Lines()
-
+func reduce(polymer string) string {
 	for {
 		buff := strings.Builder{}
 		reduced := false
@@ -48,5 +46,11 @@ func a(input *util.ChallengeInput) int {
 		}
 	}
 
-	return len(polymer)
+	return polymer
+}
+
+func a(input *util.ChallengeInput) int {
+	polymer := <-input.Lines()
+
+	return len(reduce(polymer))
 }
