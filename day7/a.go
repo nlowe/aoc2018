@@ -18,9 +18,10 @@ var A = &cobra.Command{
 }
 
 type node struct {
-	key      string
-	children []*node
-	refcount int
+	key           string
+	children      []*node
+	refcount      int
+	workRemaining int
 }
 
 type dependency struct {
@@ -37,33 +38,7 @@ func parseDependency(line string) *dependency {
 }
 
 func a(input *util.ChallengeInput) string {
-	nodes := map[string]*node{}
-	tail := &node{children: []*node{}}
-	var dependencies []*dependency
-	for line := range input.Lines() {
-		d := parseDependency(line)
-		dependencies = append(dependencies, d)
-		nodes[d.step] = &node{key: d.step, children: []*node{}}
-
-		if _, found := nodes[d.dependsOn]; !found {
-			tail.key = d.dependsOn
-		}
-	}
-
-	nodes[tail.key] = tail
-
-	var head []*node
-	for _, dependency := range dependencies {
-		target := nodes[dependency.step]
-		target.children = append(target.children, nodes[dependency.dependsOn])
-		nodes[dependency.dependsOn].refcount++
-	}
-
-	for _, node := range nodes {
-		if node.refcount == 0 {
-			head = append(head, node)
-		}
-	}
+	head := linkTree(input)
 
 	order := ""
 	for {
@@ -87,4 +62,36 @@ func a(input *util.ChallengeInput) string {
 	}
 
 	return order
+}
+
+func linkTree(input *util.ChallengeInput) []*node {
+	nodes := map[string]*node{}
+	tail := &node{children: []*node{}}
+	var dependencies []*dependency
+
+	for line := range input.Lines() {
+		d := parseDependency(line)
+		dependencies = append(dependencies, d)
+		nodes[d.step] = &node{key: d.step, children: []*node{}}
+
+		if _, found := nodes[d.dependsOn]; !found {
+			tail.key = d.dependsOn
+		}
+	}
+
+	nodes[tail.key] = tail
+	var head []*node
+	for _, dependency := range dependencies {
+		target := nodes[dependency.step]
+		target.children = append(target.children, nodes[dependency.dependsOn])
+		nodes[dependency.dependsOn].refcount++
+	}
+
+	for _, node := range nodes {
+		if node.refcount == 0 {
+			head = append(head, node)
+		}
+	}
+
+	return head
 }
