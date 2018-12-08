@@ -48,7 +48,7 @@ func main() {
 		day3.A, day3.B,
 		day4.A, day4.B,
 		day5.A, day5.B,
-		day6.A,
+		day6.A, day6.B,
 	)
 
 	flags := rootCmd.PersistentFlags()
