@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/nlowe/aoc2018/day9"
 	"os"
 	"time"
 
@@ -41,7 +42,7 @@ var rootCmd = &cobra.Command{
 		start = time.Now()
 	},
 	PersistentPostRun: func(_ *cobra.Command, _ []string) {
-		fmt.Printf("Took %s", time.Since(start))
+		fmt.Printf("Took %s\n", time.Since(start))
 	},
 }
 
@@ -55,6 +56,7 @@ func main() {
 		day6.A, day6.B,
 		day7.A, day7.B,
 		day8.A, day8.B,
+		day9.A,
 	)
 
 	flags := rootCmd.PersistentFlags()
