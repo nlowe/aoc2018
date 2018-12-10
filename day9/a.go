@@ -46,8 +46,7 @@ type node struct {
 	next *node
 }
 
-func a(input *util.ChallengeInput) int {
-	r := parseRules(<-input.Lines())
+func playGame(r *rules) int {
 	score := make([]int, r.players)
 
 	head := &node{value: 0}
@@ -95,4 +94,10 @@ func a(input *util.ChallengeInput) int {
 	}
 
 	return highestScore
+}
+
+func a(input *util.ChallengeInput) int {
+	r := parseRules(<-input.Lines())
+
+	return playGame(r)
 }
