@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/nlowe/aoc2018/day10"
 	"github.com/nlowe/aoc2018/day9"
 	"os"
 	"time"
@@ -57,6 +58,7 @@ func main() {
 		day7.A, day7.B,
 		day8.A, day8.B,
 		day9.A, day9.B,
+		day10.A,
 	)
 
 	flags := rootCmd.PersistentFlags()
