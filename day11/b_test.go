@@ -7,18 +7,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var aTests = []struct {
+var bTests = []struct {
 	input    string
 	expected string
 }{
-	{"18", "33,45"},
-	{"42", "21,61"},
+	{"18", "90,269,16"},
+	{"42", "232,251,12"},
 }
 
-func TestA(t *testing.T) {
-	for _, tt := range aTests {
+func TestB(t *testing.T) {
+	for _, tt := range bTests {
 		t.Run(tt.input, func(t *testing.T) {
-			require.Equal(t, tt.expected, a(util.TestInput(tt.input)))
+			require.Equal(t, tt.expected, b(util.TestInput(tt.input)))
 		})
 	}
 }
