@@ -17,7 +17,6 @@ var A = &cobra.Command{
 }
 
 const (
-	rounds  = 20
 	padding = "....."
 )
 
@@ -32,7 +31,7 @@ func score(state string, start int) int {
 	return score
 }
 
-func a(input *util.ChallengeInput) int {
+func simulate(input *util.ChallengeInput, rounds int) int {
 	state := strings.TrimSpace((<-input.Lines())[len("initial state: "):])
 
 	rules := map[string]rune{}
@@ -45,6 +44,9 @@ func a(input *util.ChallengeInput) int {
 		rules[raw[0:5]] = '#'
 	}
 
+	stable := 2
+	lastScore := score(state, 0)
+	lastDelta := 0
 	offset := 0
 	for i := 0; i < rounds; i++ {
 		// Normalize ends
@@ -73,7 +75,25 @@ func a(input *util.ChallengeInput) int {
 		}
 
 		state = nextGeneration.String()
+
+		currentScore := score(state, offset)
+		currentDelta := currentScore - lastScore
+		if currentDelta == lastDelta {
+			stable--
+			if stable == 0 {
+				fmt.Printf("Stabilized after %d iterations to +%d\n", i, currentDelta)
+
+				return currentScore + ((rounds - i - 1) * currentDelta)
+			}
+		} else {
+			lastDelta = currentDelta
+			lastScore = currentScore
+		}
 	}
 
 	return score(state, offset)
+}
+
+func a(input *util.ChallengeInput) int {
+	return simulate(input, 20)
 }
