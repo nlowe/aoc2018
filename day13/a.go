@@ -117,6 +117,14 @@ func (cs cartCollection) sortFunc(i, j int) bool {
 	c := cs[i]
 	other := cs[j]
 
+	if c == nil {
+		return false
+	}
+
+	if other == nil {
+		return true
+	}
+
 	return c.y < other.y || (c.y == other.y && c.x < other.x)
 }
 
@@ -130,21 +138,52 @@ func (cs cartCollection) cartAt(x, y int) *cart {
 	return nil
 }
 
-func (cs cartCollection) hasCollision() (int, int) {
+func (cs cartCollection) getCollidingCarts() []*cart {
+	var result []*cart
+
 	for i := 0; i < len(cs)-1; i++ {
+		if cs[i] == nil {
+			continue
+		}
+
 		for j := i + 1; j < len(cs); j++ {
+			if cs[j] == nil {
+				continue
+			}
+
 			if cs[i].x == cs[j].x && cs[i].y == cs[j].y {
-				return cs[i].x, cs[i].y
+				result = append(result, cs[i], cs[j])
 			}
 		}
 	}
 
-	return -1, -1
+	return result
 }
 
 func a(input *util.ChallengeInput) string {
-	var lines []string
+	carts, grid := initGrid(input)
 
+	for {
+		cx := -1
+		cy := -1
+		isFirstCrash := true
+		tick(carts, grid, func(collidingCarts cartCollection) bool {
+			if isFirstCrash {
+				isFirstCrash = false
+				cx = collidingCarts[0].x
+				cy = collidingCarts[0].y
+			}
+
+			return true
+		})
+		if cx > 0 && cy > 0 {
+			return fmt.Sprintf("%d,%d", cx, cy)
+		}
+	}
+}
+
+func initGrid(input *util.ChallengeInput) (cartCollection, [][]rune) {
+	var lines []string
 	w := 0
 	for line := range input.Lines() {
 		lines = append(lines, line)
@@ -152,9 +191,7 @@ func a(input *util.ChallengeInput) string {
 			w = len(line)
 		}
 	}
-
 	var carts cartCollection
-
 	grid := make([][]rune, w)
 	for i := 0; i < w; i++ {
 		grid[i] = make([]rune, len(lines))
@@ -183,53 +220,61 @@ func a(input *util.ChallengeInput) string {
 			}
 		}
 	}
+	return carts, grid
+}
 
-	for {
-		// sort carts
-		sort.Slice(carts, carts.sortFunc)
+func tick(carts cartCollection, grid [][]rune, onCollisionCallback func(cartCollection) bool) {
+	// sort carts
+	sort.Slice(carts, carts.sortFunc)
 
-		for _, cart := range carts {
-			tile := grid[cart.x][cart.y]
+	for _, cart := range carts {
+		if cart == nil {
+			continue
+		}
+		tile := grid[cart.x][cart.y]
 
-			if tile == leftRightTrackPiece || tile == upDownTrackPiece {
+		if tile == leftRightTrackPiece || tile == upDownTrackPiece {
+			cart.goStraight()
+		} else if tile == aTurnTrackPiece {
+			// /
+			if cart.d == UP {
+				cart.turnRight()
+			} else if cart.d == RIGHT {
+				cart.turnLeft()
+			} else if cart.d == DOWN {
+				cart.turnRight()
+			} else {
+				cart.turnLeft()
+			}
+		} else if tile == bTurnTrackPiece {
+			// \
+			if cart.d == UP {
+				cart.turnLeft()
+			} else if cart.d == RIGHT {
+				cart.turnRight()
+			} else if cart.d == DOWN {
+				cart.turnLeft()
+			} else {
+				cart.turnRight()
+			}
+		} else if tile == intersectionTrackPiece {
+			if cart.nextAction == goLeft {
+				cart.turnLeft()
+			} else if cart.nextAction == goStraight {
 				cart.goStraight()
-			} else if tile == aTurnTrackPiece {
-				// /
-				if cart.d == UP {
-					cart.turnRight()
-				} else if cart.d == RIGHT {
-					cart.turnLeft()
-				} else if cart.d == DOWN {
-					cart.turnRight()
-				} else {
-					cart.turnLeft()
-				}
-			} else if tile == bTurnTrackPiece {
-				// \
-				if cart.d == UP {
-					cart.turnLeft()
-				} else if cart.d == RIGHT {
-					cart.turnRight()
-				} else if cart.d == DOWN {
-					cart.turnLeft()
-				} else {
-					cart.turnRight()
-				}
-			} else if tile == intersectionTrackPiece {
-				if cart.nextAction == goLeft {
-					cart.turnLeft()
-				} else if cart.nextAction == goStraight {
-					cart.goStraight()
-				} else {
-					cart.turnRight()
-				}
-
-				cart.nextAction++
-				cart.nextAction %= 3
+			} else {
+				cart.turnRight()
 			}
 
-			if x, y := carts.hasCollision(); x > 0 && y > 0 {
-				return fmt.Sprintf("%d,%d", x, y)
+			cart.nextAction++
+			cart.nextAction %= 3
+		}
+
+		if onCollisionCallback != nil {
+			if cs := carts.getCollidingCarts(); len(cs) > 0 {
+				if onCollisionCallback(cs) {
+					return
+				}
 			}
 		}
 	}
