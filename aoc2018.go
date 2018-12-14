@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/nlowe/aoc2018/day14"
+
 	"github.com/nlowe/aoc2018/day13"
 
 	"github.com/nlowe/aoc2018/day12"
@@ -64,16 +66,19 @@ func main() {
 		day7.A, day7.B,
 		day8.A, day8.B,
 		day9.A, day9.B,
-		day10.A,
+		day10.A, // 10b is an alias of 10a
 		day11.A, day11.B,
 		day12.A, day12.B,
 		day13.A, day13.B,
+		day14.A, day14.B,
 	)
 
 	flags := rootCmd.PersistentFlags()
 	flags.StringP("input", "i", "", "Input File to read")
 
-	viper.BindPFlags(flags)
+	if err := viper.BindPFlags(flags); err != nil {
+		panic(err)
+	}
 
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)
