@@ -45,10 +45,14 @@ var rootCmd = &cobra.Command{
 		}
 		start = time.Now()
 
-		profiler = profile.Start()
+		if viper.GetBool("profile") {
+			profiler = profile.Start()
+		}
 	},
 	PersistentPostRun: func(_ *cobra.Command, _ []string) {
-		profiler.Stop()
+		if profiler != nil {
+			profiler.Stop()
+		}
 		fmt.Printf("Took %s\n", time.Since(start))
 	},
 }
