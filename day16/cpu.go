@@ -23,11 +23,17 @@ type cpu struct {
 }
 
 func (c *cpu) train(ss []snapshot) (threeOrMore int) {
+	candidates := [16]map[*instructionImplementation]bool{}
+	for i := 0; i < 16; i++ {
+		candidates[i] = map[*instructionImplementation]bool{}
+	}
+
 	for _, s := range ss {
 		count := 0
 		for _, i := range implementations {
 			if i.candidate(&s.i, s.before, s.after) {
 				count++
+				candidates[s.i.opcode][i] = true
 			}
 		}
 
@@ -36,7 +42,19 @@ func (c *cpu) train(ss []snapshot) (threeOrMore int) {
 		}
 	}
 
-	// TODO: Determine implementation
+	for opcodesRemaining := 16; opcodesRemaining > 0; opcodesRemaining-- {
+		for i, m := range candidates {
+			if len(m) == 1 {
+				for k := range m {
+					c.opcodes[i] = *k
+					for j := 0; j < 16; j++ {
+						delete(candidates[j], k)
+					}
+				}
+			}
+		}
+	}
+
 	return
 }
 
