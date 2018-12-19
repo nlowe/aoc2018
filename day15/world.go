@@ -1,7 +1,6 @@
 package day15
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
@@ -12,8 +11,8 @@ import (
 type World struct {
 	Layout [][]*Tile
 	Units  []*Unit
-	W      int
-	H      int
+
+	ElfAttack int
 
 	source []string
 }
@@ -81,20 +80,21 @@ func (t *Tile) PathEstimatedCost(to astar.Pather) float64 {
 	return float64(t.manhattanDistanceFrom(tile.x, tile.y))
 }
 
-func LoadWorld(input *util.ChallengeInput) *World {
-	result := &World{}
+func LoadWorld(input *util.ChallengeInput, elfAttack int) (*World, int, int) {
+	result := &World{ElfAttack: elfAttack}
 
 	for line := range input.Lines() {
 		result.source = append(result.source, line)
 	}
 
-	result.Reset()
+	elfCount, goblinCount := result.Reset()
 
-	return result
+	return result, elfCount, goblinCount
 }
 
-func (w *World) Reset() {
+func (w *World) Reset() (elfCount int, goblinCount int) {
 	w.Layout = [][]*Tile{}
+	w.Units = []*Unit{}
 
 	for x := 0; x < len(w.source[0]); x++ {
 		w.Layout = append(w.Layout, []*Tile{})
@@ -121,40 +121,22 @@ func (w *World) Reset() {
 					faction: r,
 				}
 
+				if unit.faction == elf {
+					unit.attack = w.ElfAttack
+					elfCount++
+				} else {
+					goblinCount++
+				}
+
 				w.Units = append(w.Units, unit)
 				tile.occupyingUnit = unit
 			}
 
 			w.Layout[x][y] = tile
-			if x > w.W {
-				w.W = x
-			}
-		}
-
-		if y > w.H {
-			w.H = y
 		}
 	}
-}
 
-func (w *World) Dump() {
-	for y := 0; y <= w.H; y++ {
-		line := strings.Builder{}
-
-		for x := 0; x <= w.W; x++ {
-			t := w.Layout[x][y]
-
-			if t.isWall {
-				line.WriteRune(wall)
-			} else if t.occupyingUnit != nil {
-				line.WriteRune(t.occupyingUnit.faction)
-			} else {
-				line.WriteRune('.')
-			}
-		}
-
-		fmt.Printf("%s\n", line.String())
-	}
+	return
 }
 
 func (w *World) AtWar() bool {
@@ -177,7 +159,7 @@ func (w *World) AtWar() bool {
 func (w *World) Tick() bool {
 	sort.Slice(w.Units, w.UnitSortFunc)
 
-	for _, u := range w.Units {
+	for i, u := range w.Units {
 		if u.hp <= 0 {
 			continue
 		}
@@ -238,7 +220,15 @@ func (w *World) Tick() bool {
 				w.Layout[target.x][target.y].occupyingUnit = nil
 
 				if !w.AtWar() {
-					return false
+					for j := i + 1; j < len(w.Units); j++ {
+						// If there is an alive friendly unit after us
+						// we didn't complete a full round
+						if w.Units[j].hp > 0 && w.Units[j].faction == u.faction {
+							return false
+						}
+					}
+
+					return true
 				}
 			}
 		}
@@ -249,7 +239,7 @@ func (w *World) Tick() bool {
 
 func (w *World) Survivors() (remainingHP, count int, faction rune) {
 	for _, u := range w.Units {
-		if u.hp >= 0 {
+		if u.hp > 0 {
 			count++
 			faction = u.faction
 			remainingHP += u.hp

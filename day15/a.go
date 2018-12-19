@@ -16,26 +16,16 @@ var A = &cobra.Command{
 }
 
 func a(input *util.ChallengeInput) int {
-	w := LoadWorld(input)
-	//fmt.Println("Initially:")
-	//DumpWorld()
-	//fmt.Println()
-
+	w, _, _ := LoadWorld(input, 3)
 	turns := 0
 
 	for w.AtWar() {
 		if w.Tick() {
 			turns++
 		}
-		//fmt.Printf("After %d round(s):\n", turns)
-		//DumpWorld()
-		//fmt.Println()
 	}
 
 	remainingHP, _, _ := w.Survivors()
 
-	//fmt.Printf("After %d round(s) with remaining health %d:\n", turns, remainingHP)
-	//w.Dump()
-	//fmt.Println()
 	return turns * remainingHP
 }
