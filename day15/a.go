@@ -78,9 +78,7 @@ war:
 
 				// Check again if we're within striking distance
 				for _, other := range u.Enemies(w) {
-					if u.withinStrikingDistance(other) && (target == nil || other.hp < target.hp) {
-						target = other
-					}
+					target = u.pickTarget(target, other)
 				}
 			}
 
