@@ -5,38 +5,31 @@ import (
 	"os"
 	"time"
 
-	"github.com/nlowe/aoc2018/day15"
-
-	"github.com/nlowe/aoc2018/day14"
-
-	"github.com/nlowe/aoc2018/day13"
-
-	"github.com/nlowe/aoc2018/day12"
-
+	"github.com/nlowe/aoc2018/day1"
 	"github.com/nlowe/aoc2018/day10"
 	"github.com/nlowe/aoc2018/day11"
-	"github.com/nlowe/aoc2018/day9"
-
-	"github.com/nlowe/aoc2018/day8"
-
-	"github.com/nlowe/aoc2018/day7"
-
-	"github.com/nlowe/aoc2018/day6"
-
-	"github.com/nlowe/aoc2018/day5"
-
-	"github.com/nlowe/aoc2018/day4"
-
+	"github.com/nlowe/aoc2018/day12"
+	"github.com/nlowe/aoc2018/day13"
+	"github.com/nlowe/aoc2018/day14"
+	"github.com/nlowe/aoc2018/day15"
+	"github.com/nlowe/aoc2018/day2"
 	"github.com/nlowe/aoc2018/day3"
-
+	"github.com/nlowe/aoc2018/day4"
+	"github.com/nlowe/aoc2018/day5"
+	"github.com/nlowe/aoc2018/day6"
+	"github.com/nlowe/aoc2018/day7"
+	"github.com/nlowe/aoc2018/day8"
+	"github.com/nlowe/aoc2018/day9"
+	"github.com/pkg/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/nlowe/aoc2018/day1"
-	"github.com/nlowe/aoc2018/day2"
 )
 
 var start time.Time
+
+type prof interface{ Stop() }
+
+var profiler prof
 
 var rootCmd = &cobra.Command{
 	Use:   "aoc2018",
@@ -51,8 +44,11 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		start = time.Now()
+
+		profiler = profile.Start()
 	},
 	PersistentPostRun: func(_ *cobra.Command, _ []string) {
+		profiler.Stop()
 		fmt.Printf("Took %s\n", time.Since(start))
 	},
 }
@@ -78,6 +74,8 @@ func main() {
 
 	flags := rootCmd.PersistentFlags()
 	flags.StringP("input", "i", "", "Input File to read")
+
+	flags.Bool("profile", false, "Profile implementation performance")
 
 	if err := viper.BindPFlags(flags); err != nil {
 		panic(err)
